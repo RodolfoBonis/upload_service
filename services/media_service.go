@@ -10,14 +10,14 @@ var (
 	validate = validator.New()
 )
 
-type mediaUpload interface {
+type MediaUpload interface {
 	FileUpload(file models.FileModel) (string, error)
 	RemoteUpload(url models.UrlModel) (string, error)
 }
 
 type media struct{}
 
-func NewMediaUpload() mediaUpload {
+func NewMediaUpload() MediaUpload {
 	return &media{}
 }
 

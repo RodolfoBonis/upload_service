@@ -1,25 +1,23 @@
 package main
 
 import (
-	"github.com/RodolfoBonis/upload_service/controllers"
+	"fmt"
+	config "github.com/RodolfoBonis/upload_service/configs"
+	"github.com/RodolfoBonis/upload_service/routes"
 	"github.com/labstack/echo/v4"
 )
 
-var mediaController = controllers.NewMediaController()
+var rootRoute = routes.NewRootRoute()
 
 func main() {
+	config.LoadEnvVars()
+
 	e := echo.New()
 
-	e.POST("/upload", func(c echo.Context) error {
-		_, err := c.FormFile("file")
+	rootRoute.StartRoute(e)
 
-		if err != nil {
-			return mediaController.RemoteUpload(c)
-		} else {
-			return mediaController.FileUpload(c)
-		}
-	})
+	port := config.EnvPortApplication()
 
-	e.Logger.Fatal(e.Start(":6000"))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 
 }

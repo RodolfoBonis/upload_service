@@ -2,38 +2,55 @@ package config
 
 import (
 	"github.com/joho/godotenv"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"os"
 )
 
-func EnvCloudName() string {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+func GetEnv(key, defaultValue string) string {
+	value := os.Getenv(key)
+	if value != "" {
+		return value
 	}
-	return os.Getenv("CLOUDINARY_CLOUD_NAME")
+
+	return defaultValue
+}
+
+func EnvCloudName() string {
+	return GetEnv("CLOUDINARY_CLOUD_NAME", "")
 }
 
 func EnvCloudAPIKey() string {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	return os.Getenv("CLOUDINARY_API_KEY")
+	return GetEnv("CLOUDINARY_API_KEY", "")
 }
 
 func EnvCloudAPISecret() string {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	return os.Getenv("CLOUDINARY_API_SECRET")
+	return GetEnv("CLOUDINARY_API_SECRET", "")
 }
 
 func EnvCloudUploadFolder() string {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	return GetEnv("CLOUDINARY_UPLOAD_FOLDER", "")
+}
+
+func EnvPortApplication() string {
+	return GetEnv("INTERNAL_APP_PORT", ":8000")
+}
+
+func LoadEnvVars() {
+	env := GetEnv("UPLOAD_ENV", "development")
+
+	if env == "production" || env == "staging" {
+		log.Println("Not using .env file in production or staging.")
+		return
 	}
-	return os.Getenv("CLOUDINARY_UPLOAD_FOLDER")
+
+	filename := ".env." + env
+
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		filename = ".env"
+	}
+
+	err := godotenv.Load(filename)
+	if err != nil {
+		log.Fatal(".env file not loaded")
+	}
 }

@@ -10,14 +10,14 @@ import (
 
 var mediaService = services.NewMediaUpload()
 
-type mediaController interface {
+type MediaController interface {
 	FileUpload(c echo.Context) error
 	RemoteUpload(c echo.Context) error
 }
 
 type media struct{}
 
-func NewMediaController() mediaController {
+func NewMediaController() MediaController {
 	return &media{}
 }
 

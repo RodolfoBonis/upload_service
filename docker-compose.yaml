@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  upload:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: upload_service
+    restart: always
+    ports:
+      - ${EXTERNAL_APP_PORT}:${INTERNAL_APP_PORT}
+    env_file:
+      - .env
+    environment:
+      - UPLOAD_ENV=${UPLOAD_ENV}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - CLOUDINARY_UPLOAD_FOLDER=${CLOUDINARY_UPLOAD_FOLDER}
+      - INTERNAL_APP_PORT=${INTERNAL_APP_PORT}
