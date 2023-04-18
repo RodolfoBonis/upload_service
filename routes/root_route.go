@@ -6,6 +6,7 @@ import (
 )
 
 var uploadHandler = handlers.NewUploadHandler()
+var healthHandler = handlers.NewHealthHandler()
 
 type RootRoute interface {
 	StartRoute(route *echo.Echo)
@@ -18,8 +19,10 @@ func NewRootRoute() RootRoute {
 }
 
 func (_ routing) StartRoute(route *echo.Echo) {
-	group := route.Group("/v1")
 
+	route.GET("/health", healthHandler.GetHealth)
+
+	group := route.Group("/v1")
 	group.POST("/upload", uploadHandler.SaveImage)
 
 }

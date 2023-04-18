@@ -1,9 +1,10 @@
 package config
 
 import (
+	"os"
+
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
-	"os"
 )
 
 func GetEnv(key, defaultValue string) string {
@@ -32,7 +33,7 @@ func EnvCloudUploadFolder() string {
 }
 
 func EnvPortApplication() string {
-	return GetEnv("INTERNAL_APP_PORT", ":8000")
+	return GetEnv("APP_PORT", ":8000")
 }
 
 func LoadEnvVars() {

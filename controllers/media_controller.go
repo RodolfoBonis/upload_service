@@ -1,11 +1,12 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/RodolfoBonis/upload_service/dtos"
 	"github.com/RodolfoBonis/upload_service/models"
 	"github.com/RodolfoBonis/upload_service/services"
 	"github.com/labstack/echo/v4"
-	"net/http"
 )
 
 var mediaService = services.NewMediaUpload()
@@ -29,7 +30,7 @@ func (*media) FileUpload(c echo.Context) error {
 			dtos.MediaDto{
 				StatusCode: http.StatusInternalServerError,
 				Message:    "Error",
-				Data:       &echo.Map{"data": "Select a file to upload"},
+				Data:       "Select a file to upload",
 			})
 	}
 
@@ -40,7 +41,7 @@ func (*media) FileUpload(c echo.Context) error {
 			dtos.MediaDto{
 				StatusCode: http.StatusInternalServerError,
 				Message:    "error",
-				Data:       &echo.Map{"data": err.Error()},
+				Data:       err.Error(),
 			})
 	}
 
@@ -51,7 +52,7 @@ func (*media) FileUpload(c echo.Context) error {
 			dtos.MediaDto{
 				StatusCode: http.StatusInternalServerError,
 				Message:    "error",
-				Data:       &echo.Map{"data": err.Error()},
+				Data:       err.Error(),
 			})
 	}
 
@@ -59,7 +60,7 @@ func (*media) FileUpload(c echo.Context) error {
 		dtos.MediaDto{
 			StatusCode: http.StatusOK,
 			Message:    "success",
-			Data:       &echo.Map{"data": uploadUrl},
+			Data:       uploadUrl,
 		})
 }
 
@@ -72,7 +73,7 @@ func (*media) RemoteUpload(c echo.Context) error {
 			dtos.MediaDto{
 				StatusCode: http.StatusBadRequest,
 				Message:    "error",
-				Data:       &echo.Map{"data": err.Error()},
+				Data:       err.Error(),
 			})
 	}
 
@@ -84,7 +85,7 @@ func (*media) RemoteUpload(c echo.Context) error {
 			dtos.MediaDto{
 				StatusCode: http.StatusInternalServerError,
 				Message:    "error",
-				Data:       &echo.Map{"data": "Error uploading file"},
+				Data:       "Error uploading file",
 			})
 	}
 
@@ -93,7 +94,7 @@ func (*media) RemoteUpload(c echo.Context) error {
 		dtos.MediaDto{
 			StatusCode: http.StatusOK,
 			Message:    "success",
-			Data:       &echo.Map{"data": uploadUrl},
+			Data:       uploadUrl,
 		})
 
 }
