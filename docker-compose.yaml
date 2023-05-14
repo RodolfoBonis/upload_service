@@ -8,6 +8,8 @@ services:
     restart: always
     deploy:
       replicas: 3
+    ports:
+      - ${APP_PORT}:${APP_PORT}
     env_file:
       - .env
     environment:

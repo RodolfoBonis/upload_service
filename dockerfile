@@ -16,5 +16,3 @@ WORKDIR /go/src/github.com/RodolfoBonis/upload_service/
 COPY --from=build-env /go/src/github.com/RodolfoBonis/upload_service/upload_service /
 
 CMD ["/upload_service"]
-
-EXPOSE 8000
