@@ -8,11 +8,6 @@ services:
     restart: always
     deploy:
       replicas: 3
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.upload-service.loadbalancer.server.port=${APP_PORT}"
-      - "traefik.http.routers.upload-service.rule=Host(`upload.docker.localhost`)"
-      - "traefik.http.routers.upload-service.service=upload-service"
     env_file:
       - .env
     environment:
@@ -22,9 +17,3 @@ services:
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
       - CLOUDINARY_UPLOAD_FOLDER=${CLOUDINARY_UPLOAD_FOLDER}
       - APP_PORT=${APP_PORT}
-    networks:
-      - traefik
-
-networks:
-  traefik:
-      external: true

@@ -1,0 +1,75 @@
+name: cd
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: unnecessary
+
+      - name: Adding Known Hosts
+        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: update project on server
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd ${{ SSH_PROJECT_PATH }}
+            git pull
+
+      - name: build and deploy docker
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd ${{ SSH_PROJECT_PATH }}
+            docker-compose up -d --build
+
+      - if: ${{ job.status == 'success'}}
+        name: Send Message via Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          token: ${{ secrets.BOTTOKEN }}
+          to: ${{ secrets.CHAT_ID }}
+          message: |
+            ✅ ${{ github.actor }} created commit:
+            Commit message: ${{ github.event.commits[0].message }}
+            Repository: ${{ github.repository }}
+            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+            Build Status: ${{ job.status }}
+            See New Build on: https://cdn.${{ secrets.SSH_HOST }}
+
+            Good job!
+
+      - if: ${{ job.status != 'success'}}
+        name: Send Message via Telegram
+        uses: appleboy/telegram-action@master
+        with:
+          token: ${{ secrets.BOTTOKEN }}
+          to: ${{ secrets.CHAT_ID }}
+          message: |
+            ⛔️ There was an error when build project
+            ${{ github.actor }} created commit:
+            Commit message: ${{ github.event.commits[0].message }}
+            Repository: ${{ github.repository }}
+            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+            Build Status: ${{ job.status }}
