@@ -41,7 +41,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd ${{ SSH_PROJECT_PATH }}
+            cd ${{ secrets.SSH_PROJECT_PATH  }}
             docker-compose up -d --build
 
       - if: ${{ job.status == 'success'}}
