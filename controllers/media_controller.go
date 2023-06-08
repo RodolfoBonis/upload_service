@@ -30,7 +30,7 @@ func (*media) FileUpload(c echo.Context) error {
 			dtos.MediaDto{
 				StatusCode: http.StatusInternalServerError,
 				Message:    "Error",
-				Data:       "Select a file to upload",
+				Data:       "Select a File to Upload",
 			})
 	}
 
