@@ -7,7 +7,7 @@ on:
       - master
 
 jobs:
-  deploy:
+  build_and_deploy:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -15,36 +15,50 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: unnecessary
+      - name: Check out repository
+        uses: actions/checkout@v2
 
-      - name: Adding Known Hosts
-        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-      - name: update project on server
-        uses: appleboy/ssh-action@v0.1.10
+      - name: Login to Container Registry
+        uses: docker/login-action@v2
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            cd ${{ secrets.SSH_PROJECT_PATH }}
-            git pull
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GH_TOKEN }}
 
-      - name: build and deploy docker
-        uses: appleboy/ssh-action@v0.1.10
+      - name: Create dotenv file
+        run: |
+          echo "
+          CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY=${{secrets.CLOUDINARY_API_KEY}}
+          CLOUDINARY_API_SECRET=${{secrets.CLOUDINARY_API_SECRET}}
+          CLOUDINARY_UPLOAD_FOLDER=${{secrets.CLOUDINARY_UPLOAD_FOLDER}}
+          UPLOAD_ENV=${{secrets.UPLOAD_ENV}}
+          APP_PORT=${{secrets.APP_PORT}}
+          " > .env
+
+      - name: Preset Image Name
+        run: | 
+        echo
+        "IMAGE_URL=$(echo ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:$(echo ${{ github.sha }} | cut -c1-7) | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: Build and push Docker Image
+        uses: docker/build-push-action@v4
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            cd ${{ secrets.SSH_PROJECT_PATH  }}
-            docker-compose up -d --build
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ env.IMAGE_URL }}
+
+      - name: Deploy Image to CapRrover
+        uses: caprover/deploy-from-github@v1.1.2
+        with:
+          server: "${{ secrets.CAPROVER_SERVER }}"
+          app: "${{ secrets.APP_NAME }}"
+          token: "${{ secrets.APP_TOKEN }}"
+          image: ${{ env.IMAGE_URL }}
 
       - if: ${{ job.status == 'success'}}
         name: Send Message via Telegram
