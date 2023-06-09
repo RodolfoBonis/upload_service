@@ -2,7 +2,7 @@ name: cd
 
 env:
   CONTEXT_DIR: './'
-  IMAGE_NAME: ${{ github.repository }}/staging
+  IMAGE_NAME: ${{ github.repository }}
   DOCKER_REGISTRY: ghcr.io
 
 on:
