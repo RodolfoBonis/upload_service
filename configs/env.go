@@ -16,20 +16,20 @@ func GetEnv(key, defaultValue string) string {
 	return defaultValue
 }
 
-func EnvCloudName() string {
-	return GetEnv("CLOUDINARY_CLOUD_NAME", "")
+func EnvMinioServer() string {
+	return GetEnv("MINIO_SERVER", "")
 }
 
-func EnvCloudAPIKey() string {
-	return GetEnv("CLOUDINARY_API_KEY", "")
+func EnvAccessID() string {
+	return GetEnv("ACCESS_ID", "")
 }
 
-func EnvCloudAPISecret() string {
-	return GetEnv("CLOUDINARY_API_SECRET", "")
+func EnvSecretKey() string {
+	return GetEnv("SECRET_KEY", "")
 }
 
-func EnvCloudUploadFolder() string {
-	return GetEnv("CLOUDINARY_UPLOAD_FOLDER", "")
+func EnvBucketName() string {
+	return GetEnv("BUCKET_NAME", "")
 }
 
 func EnvPortApplication() string {

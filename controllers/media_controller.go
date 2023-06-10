@@ -13,7 +13,6 @@ var mediaService = services.NewMediaUpload()
 
 type MediaController interface {
 	FileUpload(c echo.Context) error
-	RemoteUpload(c echo.Context) error
 }
 
 type media struct{}
@@ -45,7 +44,11 @@ func (*media) FileUpload(c echo.Context) error {
 			})
 	}
 
-	uploadUrl, err := mediaService.FileUpload(models.FileModel{File: formFile})
+	uploadUrl, err := mediaService.FileUpload(models.FileModel{
+		File: formFile,
+		Name: formHeader.Filename,
+		Size: formHeader.Size,
+	})
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError,
@@ -62,39 +65,4 @@ func (*media) FileUpload(c echo.Context) error {
 			Message:    "success",
 			Data:       uploadUrl,
 		})
-}
-
-func (*media) RemoteUpload(c echo.Context) error {
-	var url models.UrlModel
-
-	if err := c.Bind(&url); err != nil {
-		return c.JSON(
-			http.StatusBadRequest,
-			dtos.MediaDto{
-				StatusCode: http.StatusBadRequest,
-				Message:    "error",
-				Data:       err.Error(),
-			})
-	}
-
-	uploadUrl, err := mediaService.RemoteUpload(url)
-
-	if err != nil {
-		return c.JSON(
-			http.StatusInternalServerError,
-			dtos.MediaDto{
-				StatusCode: http.StatusInternalServerError,
-				Message:    "error",
-				Data:       "Error uploading file",
-			})
-	}
-
-	return c.JSON(
-		http.StatusOK,
-		dtos.MediaDto{
-			StatusCode: http.StatusOK,
-			Message:    "success",
-			Data:       uploadUrl,
-		})
-
 }

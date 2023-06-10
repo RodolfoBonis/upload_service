@@ -12,7 +12,6 @@ var (
 
 type MediaUpload interface {
 	FileUpload(file models.FileModel) (string, error)
-	RemoteUpload(url models.UrlModel) (string, error)
 }
 
 type media struct{}
@@ -28,24 +27,9 @@ func (*media) FileUpload(file models.FileModel) (string, error) {
 		return "", err
 	}
 
-	uploadUrl, err := helper.ImageUploadHelper(file.File)
+	uploadUrl, err := helper.ImageUploadHelper(file)
 	if err != nil {
 		return "", err
-	}
-	return uploadUrl, nil
-}
-
-func (*media) RemoteUpload(url models.UrlModel) (string, error) {
-	err := validate.Struct(url)
-
-	if err != nil {
-		return "", err
-	}
-
-	uploadUrl, errUrl := helper.ImageUploadHelper(url.Url)
-
-	if errUrl != nil {
-		return "", errUrl
 	}
 	return uploadUrl, nil
 }

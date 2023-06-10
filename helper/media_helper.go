@@ -2,25 +2,44 @@ package helper
 
 import (
 	"context"
+	"fmt"
 	config "github.com/RodolfoBonis/upload_service/configs"
-	"github.com/cloudinary/cloudinary-go"
-	"github.com/cloudinary/cloudinary-go/api/uploader"
-	"time"
+	"github.com/RodolfoBonis/upload_service/models"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
+	"os"
 )
 
-func ImageUploadHelper(input interface{}) (string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+func ImageUploadHelper(file models.FileModel) (string, error) {
+	ctx := context.Background()
+	endpoint := config.EnvMinioServer()
+	accessKeyID := config.EnvAccessID()
+	secretAccessKey := config.EnvSecretKey()
 
-	cld, err := cloudinary.NewFromParams(config.EnvCloudName(), config.EnvCloudAPIKey(), config.EnvCloudAPISecret())
+	minioClient, err := minio.New(endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
+		Secure: true,
+	})
 	if err != nil {
 		return "", err
 	}
 
-	uploadParam, err := cld.Upload.Upload(ctx, input, uploader.UploadParams{Folder: config.EnvCloudUploadFolder()})
+	bucketName := config.EnvBucketName()
+
+	_, err = minioClient.PutObject(
+		ctx,
+		bucketName,
+		file.Name,
+		file.File,
+		file.Size,
+		minio.PutObjectOptions{},
+	)
+
 	if err != nil {
 		return "", err
 	}
 
-	return uploadParam.SecureURL, nil
+	os.Remove(file.Name)
+
+	return fmt.Sprintf("https://%s/%s/%s", endpoint, bucketName, file.Name), nil
 }
