@@ -1,10 +1,5 @@
 name: cd
 
-env:
-  CONTEXT_DIR: './'
-  IMAGE_NAME: ${{ github.repository }}
-  DOCKER_REGISTRY: ghcr.io
-
 on:
   push:
     branches:
@@ -37,34 +32,25 @@ jobs:
           APP_PORT=${{secrets.APP_PORT}}
           " > .env
 
-      - name: Preset Image Name
-        run: |
-          echo "IMAGE_NAME_WITH_REGISTRY=$DOCKER_REGISTRY/$IMAGE_NAME" >> $GITHUB_ENV
-          export IMAGE_NAME_WITH_REGISTRY=$DOCKER_REGISTRY/$IMAGE_NAME
-          echo "FULL_IMAGE_NAME=$(echo $IMAGE_NAME_WITH_REGISTRY:$(echo $GITHUB_SHA-gitsha | cut -c1-7) | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-
-      - name: Log in to the Container registry
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      - name: Compress action step
+        uses: master-atul/tar-action@v1.0.2
+        id: compress
         with:
-            registry: ${{ env.DOCKER_REGISTRY }}
-            username: ${{ github.actor }}
-            password: ${{ secrets.GH_TOKEN }}
+          command: c
+          cwd: ./
+          files: |
+            ./
+            ./captain-definition
+            ./Dockerfile
+          outPath: deploy.tar
 
-      - name: Build and push Docker Image
-        uses: docker/build-push-action@v4
+      # Deploy to Caprover
+      - uses: caprover/deploy-from-github@d76580d79952f6841c453bb3ed37ef452b19752c
         with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ env.FULL_IMAGE_NAME }}
-
-      - name: Deploy Image to CapRrover
-        uses: caprover/deploy-from-github@d76580d79952f6841c453bb3ed37ef452b19752c
-        with:
-          server: "${{ secrets.CAPROVER_SERVER }}"
-          app: "${{ secrets.APP_NAME }}"
-          token: "${{ secrets.APP_TOKEN }}"
-          image: ${{ env.FULL_IMAGE_NAME }}
+          server: '${{ secrets.CAPROVER_SERVER }}'
+          appname: '${{ secrets.APP_NAME }}'
+          token: '${{ secrets.APP_TOKEN }}'
+          branch: 'main'
 
       - if: ${{ job.status == 'success'}}
         name: Send Message via Telegram
