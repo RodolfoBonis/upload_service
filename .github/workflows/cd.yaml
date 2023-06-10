@@ -48,7 +48,6 @@ jobs:
           server: '${{ secrets.CAPROVER_SERVER }}'
           appname: '${{ secrets.APP_NAME }}'
           token: '${{ secrets.APP_TOKEN }}'
-          branch: 'main'
 
       - if: ${{ job.status == 'success'}}
         name: Send Message via Telegram
