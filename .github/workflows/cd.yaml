@@ -24,17 +24,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Create dotenv file
-        run: |
-          echo "
-          CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
-          CLOUDINARY_API_KEY=${{secrets.CLOUDINARY_API_KEY}}
-          CLOUDINARY_API_SECRET=${{secrets.CLOUDINARY_API_SECRET}}
-          CLOUDINARY_UPLOAD_FOLDER=${{secrets.CLOUDINARY_UPLOAD_FOLDER}}
-          UPLOAD_ENV=${{secrets.UPLOAD_ENV}}
-          APP_PORT=${{secrets.APP_PORT}}
-          " > .env
-
       - name: Preset Image Name
         run: echo "IMAGE_URL=$(echo ${{ env.DOCKER_REGISTRY }}/${{ github.repository_owner }}/${{ github.event.repository.name }}:$(echo ${{ github.sha }} | cut -c1-7) | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
