@@ -40,8 +40,6 @@ jobs:
           cwd: ./
           files: |
             ./
-            ./captain-definition
-            ./Dockerfile
           outPath: deploy.tar
 
       # Deploy to Caprover
