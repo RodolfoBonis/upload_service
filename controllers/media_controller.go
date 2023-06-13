@@ -25,6 +25,15 @@ func (*media) FileUpload(c echo.Context) error {
 	formHeader, err := c.FormFile("file")
 	bucketName := c.FormValue("bucket")
 
+	if bucketName == "" {
+		return c.JSON(http.StatusBadRequest,
+			dtos.MediaDto{
+				StatusCode: http.StatusBadRequest,
+				Message:    "Error",
+				Data:       "Set a valid bucket name",
+			})
+	}
+
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError,
 			dtos.MediaDto{
