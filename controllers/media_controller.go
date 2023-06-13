@@ -23,6 +23,7 @@ func NewMediaController() MediaController {
 
 func (*media) FileUpload(c echo.Context) error {
 	formHeader, err := c.FormFile("file")
+	bucketName := c.FormValue("bucket")
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError,
@@ -48,7 +49,9 @@ func (*media) FileUpload(c echo.Context) error {
 		File: formFile,
 		Name: formHeader.Filename,
 		Size: formHeader.Size,
-	})
+	},
+		bucketName,
+	)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError,

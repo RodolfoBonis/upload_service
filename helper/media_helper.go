@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-func ImageUploadHelper(file models.FileModel) (string, error) {
+func ImageUploadHelper(file models.FileModel, bucketName string) (string, error) {
 	ctx := context.Background()
 	endpoint := config.EnvMinioServer()
 	accessKeyID := config.EnvAccessID()
@@ -23,8 +23,6 @@ func ImageUploadHelper(file models.FileModel) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	bucketName := config.EnvBucketName()
 
 	_, err = minioClient.PutObject(
 		ctx,

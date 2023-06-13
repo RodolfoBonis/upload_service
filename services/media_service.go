@@ -11,7 +11,7 @@ var (
 )
 
 type MediaUpload interface {
-	FileUpload(file models.FileModel) (string, error)
+	FileUpload(file models.FileModel, bucketName string) (string, error)
 }
 
 type media struct{}
@@ -20,14 +20,14 @@ func NewMediaUpload() MediaUpload {
 	return &media{}
 }
 
-func (*media) FileUpload(file models.FileModel) (string, error) {
+func (*media) FileUpload(file models.FileModel, bucketName string) (string, error) {
 	err := validate.Struct(file)
 
 	if err != nil {
 		return "", err
 	}
 
-	uploadUrl, err := helper.ImageUploadHelper(file)
+	uploadUrl, err := helper.ImageUploadHelper(file, bucketName)
 	if err != nil {
 		return "", err
 	}
