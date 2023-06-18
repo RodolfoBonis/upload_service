@@ -41,5 +41,5 @@ func ImageUploadHelper(file models.FileModel, bucketName string) (string, error)
 
 	algorithm := "?X-Amz-Algorithm=AWS4-HMAC-SHA256"
 
-	return fmt.Sprintf("https://%s/%s/%s/%s", endpoint, bucketName, file.Name, algorithm), nil
+	return fmt.Sprintf("https://%s/%s/%s%s", endpoint, bucketName, file.Name, algorithm), nil
 }
