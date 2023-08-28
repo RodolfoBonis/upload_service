@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/RodolfoBonis/upload_service/handlers"
+	"github.com/RodolfoBonis/upload_service/middlewares"
 	"github.com/labstack/echo/v4"
 )
 
@@ -21,8 +22,7 @@ func NewRootRoute() RootRoute {
 func (_ routing) StartRoute(route *echo.Echo) {
 
 	route.GET("/health", healthHandler.GetHealth)
-
-	group := route.Group("/v1")
+	group := route.Group("/v1", middlewares.KeyGuardian)
 	group.POST("/upload", uploadHandler.SaveImage)
 
 }

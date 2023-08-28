@@ -36,6 +36,22 @@ func EnvPortApplication() string {
 	return GetEnv("APP_PORT", ":8000")
 }
 
+func EnvGuardianHost() string {
+	return GetEnv("GUARDIAN_HOST", "localhost")
+}
+func EnvGuardianPort() string {
+	return GetEnv("GUARDIAN_PORT", "5432")
+}
+func EnvGuardianDatabase() string {
+	return GetEnv("GUARDIAN_DB", "test")
+}
+func EnvGuardianUser() string {
+	return GetEnv("GUARDIAN_USER", "test")
+}
+func EnvGuardianPassword() string {
+	return GetEnv("GUARDIAN_PASSWORD", "test")
+}
+
 func LoadEnvVars() {
 	env := GetEnv("UPLOAD_ENV", "development")
 
