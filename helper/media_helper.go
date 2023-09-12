@@ -43,3 +43,30 @@ func ImageUploadHelper(file models.FileModel, bucketName string) (string, error)
 
 	return fmt.Sprintf("https://%s/%s/%s%s", endpoint, bucketName, file.Name, algorithm), nil
 }
+
+func GetMediaHelper(ctx context.Context, bucketName, mediaName string) (*minio.Object, error) {
+	endpoint := config.EnvMinioServer()
+	accessKeyID := config.EnvAccessID()
+	secretAccessKey := config.EnvSecretKey()
+
+	minioClient, err := minio.New(endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
+		Secure: true,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	media, err := minioClient.GetObject(
+		ctx,
+		bucketName,
+		mediaName,
+		minio.GetObjectOptions{},
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return media, nil
+}

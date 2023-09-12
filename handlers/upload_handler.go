@@ -10,6 +10,7 @@ var mediaController = controllers.NewMediaController()
 
 type UploadHandler interface {
 	SaveImage(c echo.Context) error
+	GetMedia(c echo.Context) error
 }
 
 type upload struct{}
@@ -26,4 +27,8 @@ func (_ upload) SaveImage(c echo.Context) error {
 	}
 
 	return mediaController.FileUpload(c)
+}
+
+func (_ upload) GetMedia(c echo.Context) error {
+	return mediaController.GetMedia(c)
 }

@@ -22,7 +22,7 @@ func NewRootRoute() RootRoute {
 func (_ routing) StartRoute(route *echo.Echo) {
 
 	route.GET("/health", healthHandler.GetHealth)
+	route.GET("/:bucket/:media", uploadHandler.GetMedia)
 	group := route.Group("/v1", middlewares.KeyGuardian)
 	group.POST("/upload", uploadHandler.SaveImage)
-
 }
