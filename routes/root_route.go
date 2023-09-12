@@ -2,7 +2,6 @@ package routes
 
 import (
 	"github.com/RodolfoBonis/upload_service/handlers"
-	"github.com/RodolfoBonis/upload_service/middlewares"
 	"github.com/labstack/echo/v4"
 )
 
@@ -23,6 +22,6 @@ func (_ routing) StartRoute(route *echo.Echo) {
 
 	route.GET("/health", healthHandler.GetHealth)
 	route.GET("/:bucket/:media", uploadHandler.GetMedia)
-	group := route.Group("/v1", middlewares.KeyGuardian)
+	group := route.Group("/v1")
 	group.POST("/upload", uploadHandler.SaveImage)
 }

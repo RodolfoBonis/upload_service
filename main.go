@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	keyGuardian "github.com/RodolfoBonis/go_key_guardian"
 	config "github.com/RodolfoBonis/upload_service/configs"
 	"github.com/RodolfoBonis/upload_service/routes"
 	"github.com/labstack/echo/v4"
@@ -24,11 +23,11 @@ func main() {
 func init() {
 	config.LoadEnvVars()
 
-	keyGuardian.StartGuardian(&keyGuardian.ConnectorConfig{
-		Host:     config.EnvGuardianHost(),
-		Port:     config.EnvGuardianPort(),
-		DBName:   config.EnvGuardianDatabase(),
-		User:     config.EnvGuardianUser(),
-		Password: config.EnvGuardianPassword(),
-	})
+	//keyGuardian.StartGuardian(&keyGuardian.ConnectorConfig{
+	//	Host:     config.EnvGuardianHost(),
+	//	Port:     config.EnvGuardianPort(),
+	//	DBName:   config.EnvGuardianDatabase(),
+	//	User:     config.EnvGuardianUser(),
+	//	Password: config.EnvGuardianPassword(),
+	//})
 }
