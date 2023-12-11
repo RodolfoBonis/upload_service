@@ -18,7 +18,7 @@ func ImageUploadHelper(file models.FileModel, bucketName string) (string, error)
 
 	minioClient, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
-		Secure: true,
+		Secure: false,
 	})
 	if err != nil {
 		return "", err
