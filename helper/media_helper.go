@@ -18,6 +18,7 @@ func ImageUploadHelper(file models.FileModel, bucketName string) (string, error)
 
 	minioClient, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
+		Region: "br-mcz",
 		Secure: false,
 	})
 	if err != nil {
@@ -51,7 +52,8 @@ func GetMediaHelper(ctx context.Context, bucketName, mediaName string) (*minio.O
 
 	minioClient, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
-		Secure: true,
+		Region: "br-mcz",
+		Secure: false,
 	})
 	if err != nil {
 		return nil, err
